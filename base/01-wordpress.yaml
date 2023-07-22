@@ -23,8 +23,7 @@ spec:
     matchLabels:
       app: wordpress
       tier: frontend
-  strategy:
-    type: Recreate
+  replicas: 1
   template:
     metadata:
       labels:
@@ -34,7 +33,9 @@ spec:
       containers:
       - image: wordpress:6.2.1-apache
         name: wordpress
-        envFrom: # all environment vars (host, user) are in a configMapGenerator. In the pod, check that everything is correct with 'printenv | grep -i "wordpress_db"'
+        resources: {}
+        # all environment vars (host, user) are in a configMapGenerator. In the pod, check that everything is correct with 'printenv | grep -i "wordpress_db"'
+        envFrom:
         - configMapRef:
             name: wp-configmap
         env:
@@ -59,7 +60,6 @@ spec:
         volumeMounts:
         - name: wordpress-persistent-storage  # mounting the pvc into the container
           mountPath: /var/www/html
-        resources: {}
       volumes:
       - name: wordpress-persistent-storage # mounting the pvc into the pod
         persistentVolumeClaim:

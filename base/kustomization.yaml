@@ -1,6 +1,7 @@
 resources:
   - 00-persistentvolume.yaml
   - 01-wordpress.yaml
+  - 02-mysql.yaml
 
 secretGenerator:
 - name: mysql-pass
@@ -12,3 +13,7 @@ configMapGenerator:
   literals:
   - WORDPRESS_DB_HOST=wordpress-mysql
   - WORDPRESS_DB_USER=wordpress
+- name: mysql-configmap
+  literals:
+  - MYSQL_DATABASE=wordpress
+  - MYSQL_USER=wordpress
