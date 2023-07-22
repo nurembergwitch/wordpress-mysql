@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-pvc
+  labels:
+    app: wordpress
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:
+      - image: wordpress:6.2.1-apache
+        name: wordpress
+        envFrom:
+        - configMapRef:
+            name: wp-configmap
+        env:
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        # - name: WORDPRESS_DB_HOST
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: wp-configmap
+        #       key: wp-db-host
+        # - name: WORDPRESS_DB_USER
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: wp-configmap
+        #       key: wp-db-user
+        # - name: WORDPRESS_DB_PASSWORD
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: wp-configmap
+        #       key: wp-db-pass
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress-persistent-storage  # mounting the pvc into the container
+          mountPath: /var/www/html
+        resources: {}
+      volumes:
+      - name: wordpress-persistent-storage # mounting the pvc into the pod
+        persistentVolumeClaim:
+          claimName: wp-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: wordpress
+    tier: frontend
+  type: NodePort # used to be LoadBalancer

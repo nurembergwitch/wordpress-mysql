@@ -1,0 +1,27 @@
+---
+# Source: wordpress/charts/mariadb/templates/primary/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wp-mariadb
+  namespace: "default"
+  labels:
+    app.kubernetes.io/name: mariadb
+    helm.sh/chart: mariadb-12.2.5
+    app.kubernetes.io/instance: wp
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
+  annotations:
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: mysql
+      port: 3306
+      protocol: TCP
+      targetPort: mysql
+      nodePort: null
+  selector: 
+    app.kubernetes.io/name: mariadb
+    app.kubernetes.io/instance: wp
+    app.kubernetes.io/component: primary
