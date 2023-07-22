@@ -10,5 +10,5 @@ secretGenerator:
 configMapGenerator:
 - name: wp-configmap
   literals:
-  - wp-db-host=wordpress-mysql
-  - wp-db-user=wordpress
+  - WORDPRESS_DB_HOST=wordpress-mysql
+  - WORDPRESS_DB_USER=wordpress

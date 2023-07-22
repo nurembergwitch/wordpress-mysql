@@ -34,7 +34,7 @@ spec:
       containers:
       - image: wordpress:6.2.1-apache
         name: wordpress
-        envFrom:
+        envFrom: # all environment vars (host, user) are in a configMapGenerator. In the pod, check that everything is correct with 'printenv | grep -i "wordpress_db"'
         - configMapRef:
             name: wp-configmap
         env:
@@ -53,11 +53,6 @@ spec:
         #     configMapKeyRef:
         #       name: wp-configmap
         #       key: wp-db-user
-        # - name: WORDPRESS_DB_PASSWORD
-        #   valueFrom:
-        #     configMapKeyRef:
-        #       name: wp-configmap
-        #       key: wp-db-pass
         ports:
         - containerPort: 80
           name: wordpress

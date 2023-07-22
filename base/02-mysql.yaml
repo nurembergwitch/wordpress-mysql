@@ -63,7 +63,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: wordpress-mysql
+  name: wordpress-mysql # that is the wp-db-host from wp-configmap
   labels:
     app: wordpress
 spec:
